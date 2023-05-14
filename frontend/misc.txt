@@ -1,0 +1,24 @@
+Main background: light blue (#b2d8ff) or gray (#f1f1f1)
+Text: dark gray (#333333)
+Icons: white (#ffffff) or gray (#999999)
+Sunny/clear weather: yellow (#ffd700) or orange (#ff8c00)
+Rainy weather: dark blue (#0077be) or teal (#008080)
+Snowy weather: white (#ffffff) or light blue (#b2d8ff)
+Cloudy weather: light gray (#dcdcdc) or dark gray (#a9a9a9)
+
+
+
+
+A great typography scheme for a weather web app should be easy to read, modern, and have a clean and minimalistic look. Here are some suggestions for a typography scheme for a weather web app:
+
+Use a sans-serif font for headings and titles: Sans-serif fonts are a good choice for headings and titles because they are clean, modern, and easy to read. Some great sans-serif fonts for headings and titles are Open Sans, Lato, and Roboto.
+
+Use a serif font for body text: Serif fonts are a good choice for body text because they are easy to read and provide a classic and elegant look. Some great serif fonts for body text are Georgia, Times New Roman, and Baskerville.
+
+Use a font size that is easy to read: The font size you choose should be big enough to be readable, but not too big that it looks unprofessional. A good rule of thumb is to use a font size between 16px and 18px for body text and a font size between 24px and 36px for headings and titles.
+
+Use font weights to create hierarchy: Font weights can be used to create visual hierarchy and make important information stand out. For example, you could use a bold font weight for headings and titles and a regular font weight for body text.
+
+Use font colors that contrast with the background: Font colors should contrast with the background color to ensure readability. For example, if you have a light background color, use a dark font color, and vice versa.
+
+Overall, a typography scheme for a weather web app should be simple, easy to read, and have a clean and modern look.
