@@ -79,6 +79,9 @@
     align-items: center;
     gap: 15px;
 }
+.forgotPasswordButton {
+    justify-content: center;
+}
 .signInButton > button {
     width: 45%;
     height: 40px;
