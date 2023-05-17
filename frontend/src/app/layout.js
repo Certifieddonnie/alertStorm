@@ -1,8 +1,5 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
 import { RegisterPWA } from "./register";
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -13,11 +10,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png"></link>
-        <meta name="theme-color" content="#fff" />
+          <meta name="theme-color" content="#fff" />
+          <link rel="manifest" href="/manifest.json" />
+          <link rel="apple-touch-icon" href="/icon.png" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+          <link
+              href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian&family=Roboto+Mono&display=swap"
+              rel="stylesheet"
+          />
       </head>
-      <body className={inter.className}>
+      <body>
       {children}
       <RegisterPWA />
       </body>

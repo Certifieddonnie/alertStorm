@@ -1,0 +1,111 @@
+.main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+.signInContainer {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 20px;
+    padding: 50px min(10%, 60px) 70px;
+    background: var(--white);
+    box-shadow: 0 0 15px 1px rgba(51,51,51,0.5);
+}
+.form {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 40px;
+    font-family: var(--text-font-family);
+}
+.form > div {
+    width: 100%;
+}
+.formTitle {
+    color: var(--heading-color);
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 8px;
+}
+.formTitle h1 {
+    font-family: var(--heading-font-family);
+    font-size: 30px;
+}
+.formTitle hr {
+    width: 40px;
+    border: 2px solid var(--heading-color);
+}
+.formField {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 20px;
+}
+.formField > div {
+    position: relative;
+    width: 100%;
+    height: 40px;
+}
+.formField > div input {
+    width: 100%;
+    height: 100%;
+    padding: 0 20px;
+    font-family: var(--text-font-family);
+    font-size: 15px;
+    color: var(--text-color);
+}
+.viewPassword {
+    position: absolute;
+    top: 11px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+}
+.viewPassword svg {
+    width: 100%;
+}
+.viewPassword svg path {
+    fill: var(--text-color);
+}
+.signInButton {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+.signInButton > button {
+    width: 45%;
+    height: 40px;
+    border-radius: 20px;
+    transition: var(--btn-transition);
+    opacity: .7;
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    background: transparent;
+    font-family: var(--text-font-family);
+    font-weight: 600;
+    font-size: 15px;
+}
+.signInButton > button:hover,
+.signInButton > button.active {
+    opacity: 1;
+    background: var(--text-color);
+    color: var(--white);
+}
+
+@media screen and (max-width: 425px) {
+    .signInButton {
+        flex-flow: column wrap;
+        justify-content: center;
+    }
+    .signInButton > button {
+        width: 100%;
+        font-size: 15px;
+    }
+}
