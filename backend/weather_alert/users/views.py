@@ -4,9 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from .models import User
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
 from knox.views import LoginView as KnoxLoginView
-from rest_framework.authtoken.serializers import AuthTokenSerializer
+# from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.models import AuthToken
 
 
@@ -19,6 +19,7 @@ class UserListApiView(generics.ListCreateAPIView):
 
     search_fields = (
         '^country',
+        '^userid',
     )
     
 
@@ -28,35 +29,46 @@ class RegisterAPI(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         """ User sign up"""
-        encryptedpassword = make_password(request.data.get('password'))
-        data = {
-            'email': request.data.get('email'),
-            'password': encryptedpassword,
-            'city': request.data.get('city'),
-            'country': request.data.get('country'),
-        }
-        serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({ "user": serializer.data, "token": AuthToken.objects.create(user)[1]}, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # encryptedpassword = make_password(request.data.get('password'))
+        # data = {
+        #     'email': request.data.get('email'),
+        #     'password': re,
+        #     'city': request.data.get('city'),
+        #     'country': request.data.get('country'),
+        # }
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                'id': serializer.data.get('userid', None),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
 
 
 class LoginAPI(KnoxLoginView):
+    """
+    Logs in an existing user.
+    """
     permission_classes = [permissions.AllowAny]
+    serializer_class = LoginSerializer
 
-    def post(self, request, format=None):
-        """ Login API """
-        data = {
-            'username': request.data.get('email'),
-            'email': request.data.get('email'),
-            'password': request.data.get('password'),
-        }
-        serializer = AuthTokenSerializer(data=data)
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            login(request, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        """
+        Checks is user exists.
+        Email and password are required.
+        Returns a JSON web token.
+        """
+        # encryptedpassword = make_password(request.data.get('password'))
+        # data = {
+        #     'email': request.data.get('email'),
+        #     'password': request.data.get('password'),
+        # }
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 

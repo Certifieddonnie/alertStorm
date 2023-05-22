@@ -3,10 +3,11 @@ from django.utils import timezone
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
-# from uuid import uuid4
+from django_enum import EnumField
+from uuid import uuid4
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, city="Lagos", country="Nigeria"):
+    def create_user(self, email, password=None, city="Lagos", country="Nigeria"):
         """ creates and saves a User
         """
         if not email:
@@ -26,8 +27,7 @@ class UserManager(BaseUserManager):
 # Create your models here.
 class User(AbstractBaseUser):
     """User Model"""
-    # userid = models.CharField(max_length=50, default=lambda: str(uuid4), unique=True)
-    username = None
+    userid = models.CharField(max_length=50, default=str(uuid4()))
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255, null=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -36,9 +36,9 @@ class User(AbstractBaseUser):
 
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['password', 'city', 'country']
+    REQUIRED_FIELDS = ['userid','password', 'city', 'country']
     objects = UserManager()
 
     def __str__(self) -> str:
-        return self.email
+        return self.userid + ' ' + self.email
 
