@@ -1,13 +1,15 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
 from django_enum import EnumField
 from uuid import uuid4
+from multiselectfield import MultiSelectField
+
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, city="Lagos", country="Nigeria"):
+    def _create_user(self, email, password=None, **extra_fields):
         """ creates and saves a User
         """
         if not email:
@@ -15,17 +17,45 @@ class UserManager(BaseUserManager):
         
         user = self.model(
             email=self.normalize_email(email),
-            city=city,
-            country=country,
+            **extra_fields
         )
 
         user.set_password(password)
         user.save(using=self._db)
+        print(f"User ==> {user}")
         return user
+    
+    def create_user(self, email, password=None, **extra_fields):
+        """
+        Create and return a `User` with an email, username and password.
+        """
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('city', 'Lagos')
+        extra_fields.setdefault('country', 'Nigeria')
+
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Create and return a `User` with superuser (admin) permissions.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('city', 'Lagos')
+        extra_fields.setdefault('country', 'Nigeria')
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(email, password, **extra_fields)
 
 
 # Create your models here.
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     """User Model"""
     userid = models.CharField(max_length=50, default=str(uuid4()))
     email = models.EmailField(max_length=255, unique=True)
@@ -33,6 +63,8 @@ class User(AbstractBaseUser):
     date_joined = models.DateTimeField(default=timezone.now)
     city = models.CharField(max_length=255, null=False, default="Lagos")
     country = models.CharField(max_length=255, null=False, default="Nigeria")
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
 
     USERNAME_FIELD = 'email'
@@ -40,5 +72,21 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     def __str__(self) -> str:
-        return self.userid + ' ' + self.email
+        return self.email
 
+
+class Notification(models.Model):
+    """ Notification options """
+    NOTIFY_CHOICES=(
+        ("In-App", "In-App"),
+        ("Push", "Push"),
+        ("Email", "Email"),
+        ("Chat", "Chat"),
+        ("SMS", "SMS"),
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
+    notification = MultiSelectField(choices=NOTIFY_CHOICES, max_choices=5, max_length=6)
+
+    def __str__(self) -> str:
+        return f"{self.user.email} chose {self.notification}"

@@ -1,15 +1,28 @@
-from rest_framework import serializers
-from .models import User
+from rest_framework import serializers, fields
+from .models import User, Notification
 from django.shortcuts import get_object_or_404
 from email_validator import validate_email
 from django.core import exceptions
 from django.contrib.auth import authenticate
 # from django.contrib.auth.models import User
 
+
+class NotifySerializer(serializers.HyperlinkedModelSerializer):
+    """ Notification Serializer """
+
+    class Meta:
+        model = Notification
+        fields = ["notification"]
+        # field = fields.MultipleChoiceField(choices=Notify.NOTIFY_CHOICES, allow_blank=True)
+
+
 class UserSerializer(serializers.ModelSerializer):
+
+    notification = NotifySerializer(read_only=True)
+
     class Meta:
         model = User
-        fields = ["userid","email", "password", "date_joined", "city", "country"]
+        fields = ["userid","email", "password", "date_joined", "notification", "city", "country"]
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
@@ -19,44 +32,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}, 'userid': {'read_only': True}, 'date_joined': {'read_only': True}}
     
     def create(self, validated_data):
-        print(f"validated data ==>  {validated_data}")
+        # print(f"validated data ==>  {validated_data}")
         user = User.objects.create_user(**validated_data)
 
         return user
 
-# class AuthCustomTokenSerializer(serializers.Serializer):
-#     email = serializers.CharField()
-#     password = serializers.CharField()
-
-#     def validate(self, attrs):
-#         email = attrs.get('email')
-#         password = attrs.get('password')
-
-#         if email and password:
-#             # Check if user sent email
-#             if validate_email(email):
-#                 user_request = get_object_or_404(
-#                     User,
-#                     email=email,
-#                 )
-
-#                 email = user_request.email
-
-#             user = authenticate(username=email, password=password)
-
-#             if user:
-#                 if not user.is_active:
-#                     msg = 'User account is disabled.'
-#                     raise exceptions.ValidationError(msg)
-#             else:
-#                 msg = 'Unable to log in with provided credentials.'
-#                 raise exceptions.ValidationError(msg)
-#         else:
-#             msg = 'Must include "email" and "password"'
-#             raise exceptions.ValidationError(msg)
-
-#         attrs['user'] = user
-#         return attrs
 
 class LoginSerializer(serializers.Serializer):
     """
@@ -100,6 +80,7 @@ class LoginSerializer(serializers.Serializer):
                 'This user has been deactivated.'
             )
 
-        return {
-            'token': user.userid,
-        }
+        return user
+
+
+
