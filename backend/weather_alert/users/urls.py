@@ -1,14 +1,17 @@
 # from django.conf.urls import url
-from django.urls import path, include, re_path
-from knox import views as knox_views
-from .views import (
-    UserListApiView, RegisterAPI, LoginAPI
-)
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('login/', LoginAPI.as_view(), name='login'),
-    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
-    path('register/', RegisterAPI.as_view(), name='register'),
-    path('countries/', UserListApiView.as_view()),
+    path('', views.WelcomeView.as_view(), name='welcome'),
+    path('login/', views.UserLogin.as_view(), name='login'),
+    path('logout/', views.UserLogout.as_view(), name='logout'),
+    path('register/', views.UserRegister.as_view(), name='register'),
+    path('user/', views.UserView.as_view(), name='user'),
+    path('notify/', views.NotifyTypeAPI.as_view(), name='notifications'),
+    path('notall/', views.NotifyListApiView.as_view(), name='allnote'),
+    path('filter/', views.UserListApiView.as_view(), name='filter'),
+    path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
+    path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('delete_user/<int:pk>/', views.DeleteUserView.as_view(), name='delete_user'),
 ]
