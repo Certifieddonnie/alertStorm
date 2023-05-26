@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
 )
 from django_enum import EnumField
 from uuid import uuid4
+from multiselectfield import MultiSelectField
 
 
 class UserManager(BaseUserManager):
@@ -77,15 +78,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Notification(models.Model):
     """ Notification options """
     NOTIFY_CHOICES=(
-        ("In-App", "In-App"),
-        ("Push", "Push"),
-        ("Email", "Email"),
-        ("Chat", "Chat"),
-        ("SMS", "SMS"),
+        ('1', "In-App"),
+        ("2", "Push"),
+        ("3", "Email"),
+        ("4", "Chat"),
+        ("5", "SMS"),
     )
 
     user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
-    notification = models.CharField(max_length=50, choices=NOTIFY_CHOICES)
+    notification = MultiSelectField(choices=NOTIFY_CHOICES, max_length=5, max_choices=5)
 
     class Meta:
         unique_together = ['user', 'id']
