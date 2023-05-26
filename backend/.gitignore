@@ -1,3 +1,4 @@
 test.ipynb
 venv/
 weather_alert/weather_alert/.env
+weather_alert/weather_alert/my.cnf
