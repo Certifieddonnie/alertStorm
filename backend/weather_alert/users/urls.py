@@ -9,5 +9,6 @@ urlpatterns = [
     path('register/', views.UserRegister.as_view(), name='register'),
     path('user/', views.UserView.as_view(), name='user'),
     path('notify/', views.NotifyTypeAPI.as_view(), name='notifications'),
+    path('notall/', views.NotifyListApiView.as_view(), name='allnote'),
     path('filter/', views.UserListApiView.as_view(), name='filter'),
 ]

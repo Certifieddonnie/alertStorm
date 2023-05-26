@@ -1,5 +1,6 @@
 from rest_framework import serializers, fields
 from .models import User, Notification
+from django import forms
 from django.shortcuts import get_object_or_404
 from email_validator import validate_email
 from django.core import exceptions
@@ -7,22 +8,13 @@ from django.contrib.auth import authenticate
 # from django.contrib.auth.models import User
 
 
-class NotifySerializer(serializers.HyperlinkedModelSerializer):
-    """ Notification Serializer """
-
-    class Meta:
-        model = Notification
-        fields = ["notification"]
-        # field = fields.MultipleChoiceField(choices=Notify.NOTIFY_CHOICES, allow_blank=True)
-
-
 class UserSerializer(serializers.ModelSerializer):
 
-    notification = NotifySerializer(read_only=True)
+    notifications = serializers.SlugRelatedField(many=True, read_only=True, slug_field='notification')
 
     class Meta:
         model = User
-        fields = ["userid","email", "password", "date_joined", "notification", "city", "country"]
+        fields = ["userid","email", "password", "date_joined", "notifications", "city", "country"]
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
@@ -83,4 +75,11 @@ class LoginSerializer(serializers.Serializer):
         return user
 
 
+class NotificationSerializer(serializers.ModelSerializer):
+    """ form to choose notification """
+    notification = serializers.MultipleChoiceField(choices=Notification.NOTIFY_CHOICES, required=False)
+
+    class Meta:
+        model = Notification
+        fields = ['notification', ]
 

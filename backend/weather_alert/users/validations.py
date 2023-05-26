@@ -1,5 +1,6 @@
 # Validation Utils
 from typing import Dict
+from .models import User
 
 def clean_data(data) -> Dict[str, str]:
     """ cleans up the request data """

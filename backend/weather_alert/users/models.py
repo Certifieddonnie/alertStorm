@@ -5,7 +5,6 @@ from django.contrib.auth.models import (
 )
 from django_enum import EnumField
 from uuid import uuid4
-from multiselectfield import MultiSelectField
 
 
 class UserManager(BaseUserManager):
@@ -57,7 +56,7 @@ class UserManager(BaseUserManager):
 # Create your models here.
 class User(AbstractBaseUser, PermissionsMixin):
     """User Model"""
-    userid = models.CharField(max_length=50, default=str(uuid4()))
+    userid = models.UUIDField(default=uuid4, editable=False, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255, null=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -85,8 +84,12 @@ class Notification(models.Model):
         ("SMS", "SMS"),
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
-    notification = MultiSelectField(choices=NOTIFY_CHOICES, max_choices=5, max_length=6)
+    user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    notification = models.CharField(max_length=50, choices=NOTIFY_CHOICES)
+
+    class Meta:
+        unique_together = ['user', 'id']
+        ordering = ['id']
 
     def __str__(self) -> str:
-        return f"{self.user.email} chose {self.notification}"
+        return f"{self.id}: {self.notification}"

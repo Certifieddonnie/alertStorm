@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import status, generics, permissions
-from .models import User
-from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, NotifySerializer
+from .models import User, Notification
+from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, NotificationSerializer
 from .validations import clean_data
 
 
@@ -29,6 +29,12 @@ class UserListApiView(generics.ListCreateAPIView):
         '^country',
     )
     
+
+class NotifyListApiView(generics.ListCreateAPIView):
+    """ notify all """
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
 
 class UserRegister(generics.GenericAPIView):
     """ register api view """
@@ -89,7 +95,10 @@ class UserView(generics.GenericAPIView):
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        notify = NotificationSerializer(request.user)
+        return Response({
+            'user': serializer.data,
+            }, status=status.HTTP_200_OK)
 
 
 
@@ -97,13 +106,15 @@ class NotifyTypeAPI(generics.GenericAPIView):
     """ Users choose their notification means """
     permission_classes = (permissions.IsAuthenticated, )
     authentication_classes = (SessionAuthentication, )
-    serializer_class = NotifySerializer
+    serializer_class =  NotificationSerializer
 
     def post(self, request):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid(raise_exception=True):
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        form = self.serializer_class(data=request.data)
+        if form.is_valid(raise_exception=True):
+            # Notification.user = request.user
+            form.save(user=request.user)
+            # Notification.save
+            return Response(form.data, status=status.HTTP_200_OK)
 
 
 
