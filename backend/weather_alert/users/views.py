@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import status, generics, permissions
 from .models import User, Notification
-from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, NotificationSerializer
+from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, NotificationSerializer, UpdateUserSerializer, ChangePasswordSerializer
 from .validations import clean_data
 
 
@@ -33,8 +33,10 @@ class UserListApiView(generics.ListCreateAPIView):
 class NotifyListApiView(generics.ListCreateAPIView):
     """ notify all """
     permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
+
 
 class UserRegister(generics.GenericAPIView):
     """ register api view """
@@ -95,7 +97,7 @@ class UserView(generics.GenericAPIView):
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        notify = NotificationSerializer(request.user)
+        # notify = NotificationSerializer(request.user)
         return Response({
             'user': serializer.data,
             }, status=status.HTTP_200_OK)
@@ -117,5 +119,27 @@ class NotifyTypeAPI(generics.GenericAPIView):
             return Response(form.data, status=status.HTTP_200_OK)
 
 
+class UpdateProfileView(generics.UpdateAPIView):
 
-    
+    queryset = User.objects.all()
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    serializer_class = UpdateUserSerializer
+    # lookup_field = 'email'
+
+class ChangePasswordView(generics.UpdateAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+
+
+class DeleteUserView(generics.DestroyAPIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (SessionAuthentication, )
+
+    def delete(self, request, pk=None):
+        Usr = User.objects.filter(pk=pk)
+        Usr.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'users',
     'django_filters',
     'multiselectfield',
+    # 'django_password_validators',
+    # 'django_password_validators.password_history',
 ]
 
 MIDDLEWARE = [
